@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бронювання квитків</title>
+    <style>
+        body {
+            font-family: "Segoe UI","Open Sans","Helvetica Neue",sans-serif;
+            background-color: #f7f6f8;
+            color: #333;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Navigation */
+        nav {
+            background-color: #213786;
+            padding: 15px;
+            width: 100%; 
+            font-weight: bold;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center; 
+        }
+
+        nav ul li {
+            margin: 0 10px; 
+        }
+
+        nav ul li a {
+            color: white; 
+            text-decoration: none; 
+            padding: 10px 15px; 
+            border-radius: 5px; 
+            transition: background-color 0.3s ease, color 0.3s ease; 
+        }
+
+        nav ul li a:hover {
+            background-color: #ef9010; 
+            color: #333; 
+        }
+
+
+
+        /* Cinema hall */
+        .seating-chart {
+            display: grid;
+            grid-template-columns: repeat(15, 40px);
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .seat {
+            width: 40px;
+            height: 50px;
+            background-color: #d4d5d6;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .seat.selected {
+            background-color: #ef9010;
+        }
+        .seat.occupied {
+            background-color: #213786;
+            cursor: not-allowed;
+        }
+        /* Form */
+        .form-container {
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; 
+            width: 790px;
+        }
+
+        .form-group label {
+            font-size: 15px;
+            align-items: center; 
+        }
+
+        .form-container input {
+            padding: 10px;
+            position: ce;
+            margin: 10px 0;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 12px;
+            border: .1px solid #636363;
+        }
+        .form-container input:hover  {
+            outline: 1px solid #213786; 
+            
+        }
+        .form-container button {
+            padding: 10px 20px;
+            background-color: #213786;
+            color: white;
+            border: none;
+            cursor: pointer;
+            height: 45px;
+            width: 350px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .screen {
+            width: 790px;
+            height: 35px;
+            background-color: #4a4a4a;
+            color: white;
+            line-height: 30px;
+            margin: 20px auto;
+            text-align: center;
+            font-weight: bold;
+            border: none;
+            border-top-right-radius: 18px;
+            border-top-left-radius: 18px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="index.html">Головна</a></li>
+            <li><a href="booking.html">Бронювання квитків</a></li>
+            <li><a href="about.html">Про нас</a></li>
+            <li><a href="contact.html">Контакти</a></li>
+        </ul>
+    </nav>
+
+    <h1>Бронювання квитків на фільм</h1>
+    
+    <div class="screen">Екран </div> 
+    <div class="seating-chart" id="seating-chart">
+        <!-- Each place is created with JS -->
+    </div>
+    
+
+    <!-- Form for entering information -->
+    <div class="form-container">
+        <div class="form-group">
+            <label for="full_name">Повне ім'я</label>
+            <input type="text" id="full_name" required>
+        </div>
+    
+        <div class="form-group">
+            <label for="phone">Номер телефону</label>
+            <input type="tel" id="phone" required>
+        </div>
+    
+        <div class="form-group">
+            <label for="email">Електронна пошта</label>
+            <input type="email" id="email" required>
+        </div>
+       
+    </div>
+
+    <div class="form-container">
+        <button id="submit">Забронювати</button>
+    </div>
+
+    <!-- QR-code section -->
+    <div id="qr-code"></div>
+
+    <script>
+        const seatingChart = document.getElementById('seating-chart');
+        let selectedSeats = [];
+
+        // Create an interactive layout of the hall (15x10 seats)
+        for (let i = 0; i < 150; i++) {
+             const seat = document.createElement('div');
+            seat.classList.add('seat');
+            seat.addEventListener('click', () => {
+                // Switch the state of the selected seat
+                seat.classList.toggle('selected');
+                // Add or remove a place from the array of selected ones
+                if (seat.classList.contains('selected')) {
+                    selectedSeats.push(seat);
+                } else {
+                    selectedSeats = selectedSeats.filter(s => s !== seat);
+                }
+        });
+        seatingChart.appendChild(seat);
+        }
+
+        document.getElementById('submit').addEventListener('click', () => {
+            const fullName = document.getElementById('full_name').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+
+            if (selectedSeats.length === 0) {
+                alert('Виберіть, будь ласка, місце!');
+                return; 
+            }
+            if (fullName && phone && email) {
+                alert('Бронювання успішно створено!');
+            } else {
+                alert('Будь ласка, заповніть всі поля!');
+            }
+        });
+    </script>
+</body>
+</html>
