@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Бронювання квитків</title>
+    <title>KinoBook - Бронювання квитків</title>   
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
     <style>
         body {
             font-family: "Segoe UI","Open Sans","Helvetica Neue",sans-serif;
@@ -18,7 +20,7 @@
         nav {
             background-color: #213786;
             padding: 15px;
-            width: 100%; 
+            width: 100%;
             font-weight: bold;
         }
 
@@ -27,27 +29,46 @@
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: center; 
+            justify-content: flex-start;
         }
 
-        nav ul li {
-            margin: 0 10px; 
+        .logo {
+            color: white;
+            user-select: none;
+            margin: 0 10px;
+            padding-right: 7px;
+            font-size: 18px;
         }
 
         nav ul li a {
-            color: white; 
-            text-decoration: none; 
-            padding: 10px 15px; 
-            border-radius: 5px; 
-            transition: background-color 0.3s ease, color 0.3s ease; 
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         nav ul li a:hover {
-            background-color: #ef9010; 
-            color: #333; 
+            background-color: #ef9010;
+            color: #333;
         }
 
+        /* Film info */
+        .film-info {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px auto;
+            width: 80%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
 
+        .film-info img {
+            width: 200px;
+            height: auto;
+            border-radius: 10px;
+        }
 
         /* Cinema hall */
         .seating-chart {
@@ -57,6 +78,7 @@
             justify-content: center;
             margin: 20px 0;
         }
+
         .seat {
             width: 40px;
             height: 50px;
@@ -64,13 +86,16 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
         .seat.selected {
             background-color: #ef9010;
         }
+
         .seat.occupied {
             background-color: #213786;
             cursor: not-allowed;
         }
+
         /* Form */
         .form-container {
             margin: 20px auto;
@@ -78,6 +103,7 @@
             flex-direction: column;
             align-items: center;
         }
+
         .form-group {
             display: flex;
             flex-direction: column;
@@ -92,17 +118,17 @@
 
         .form-container input {
             padding: 10px;
-            position: ce;
             margin: 10px 0;
             width: 100%;
             font-size: 16px;
             border-radius: 12px;
             border: .1px solid #636363;
         }
-        .form-container input:hover  {
+
+        .form-container input:hover {
             outline: 1px solid #213786; 
-            
         }
+
         .form-container button {
             padding: 10px 20px;
             background-color: #213786;
@@ -114,7 +140,14 @@
             border-radius: 12px;
             font-size: 16px;
             font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
+
+        .form-container button:hover {
+            background-color: #263e97;
+            transform: scale(1.05);
+        }
+
         .screen {
             width: 790px;
             height: 35px;
@@ -127,6 +160,7 @@
             border: none;
             border-top-right-radius: 18px;
             border-top-left-radius: 18px;
+            user-select: none;
         }
     </style>
 </head>
@@ -134,83 +168,150 @@
     <!-- Navigation -->
     <nav>
         <ul>
+            <li class="logo">KinoBook</li>
             <li><a href="index.html">Головна</a></li>
-            <li><a href="booking.html">Бронювання квитків</a></li>
-            <li><a href="about.html">Про нас</a></li>
-            <li><a href="contact.html">Контакти</a></li>
+            <li><a href="movies.html">Фільми</a></li>
+            <li><a href="tickets.html">Мої квитки</a></li>
         </ul>
     </nav>
 
+
     <h1>Бронювання квитків на фільм</h1>
-    
+
+    <!-- Film information section -->
+    <div class="film-info">
+        <h2 id="film-title">Назва фільму</h2>
+        <img id="film-image" src="" alt="Зображення фільму"> 
+    </div>
+
     <div class="screen">Екран </div> 
     <div class="seating-chart" id="seating-chart">
         <!-- Each place is created with JS -->
     </div>
     
-
-    <!-- Form for entering information -->
-    <div class="form-container">
-        <div class="form-group">
-            <label for="full_name">Повне ім'я</label>
-            <input type="text" id="full_name" required>
-        </div>
+    <!-- Form for entering information -->  
+        
+        <form action="/register" method="POST">
+            <div class="form-container">
+                <div class="form-group">
+                    <label for="full_name">Повне ім'я</label>                  
+                    <input type="text" name="full_name" placeholder="Full Name" required>
+                </div>
+            
+                <div class="form-group">
+                    <label for="phone">Номер телефону</label>
+                    <input type="text" name="phone" placeholder="Phone" required>
+                </div>
+            
+                <div class="form-group">
+                    <label for="email">Електронна пошта</label>
+                        <input type="email" name="email" placeholder="Email" required>
+                </div>
+        
+                <div class="form-group">
+                    <label for="password">Пароль</label> 
+                    <input type="password" name="password" placeholder="Password" required>
+                </div>
+            </div>  
+             
+            <div class="form-container"> 
+                <button type="submit" id="submit">Забронювати</button>
+            </div> 
+        </form> 
+        
     
-        <div class="form-group">
-            <label for="phone">Номер телефону</label>
-            <input type="tel" id="phone" required>
-        </div>
-    
-        <div class="form-group">
-            <label for="email">Електронна пошта</label>
-            <input type="email" id="email" required>
-        </div>
-       
-    </div>
 
-    <div class="form-container">
-        <button id="submit">Забронювати</button>
-    </div>
+        <script>
+            const seatingChart = document.getElementById('seating-chart');
+            let selectedSeats = [];
+        
+            // Create an interactive layout of the hall (15x10 seats)
+            for (let i = 0; i < 150; i++) {
+                const seat = document.createElement('div');
+                seat.classList.add('seat');
+                seat.addEventListener('click', () => {
+                    // Toggle seat selection state
+                    seat.classList.toggle('selected');
+                    // Update selected seats array
+                    if (seat.classList.contains('selected')) {
+                        selectedSeats.push(seat);
+                    } else {
+                        selectedSeats = selectedSeats.filter(s => s !== seat);
+                    }
+                });
+                seatingChart.appendChild(seat);
+            }
+        
+            // Отримуємо параметри з URL
+            const params = new URLSearchParams(window.location.search);
+            const title = params.get('title');
+            const image = params.get('image');
+            const formattedDate = params.get('date') || 'Дата не обрана';
+            const selectedSession = params.get('session') || 'Час не обраний';
+        
+            document.getElementById('film-title').innerText = title;
+            document.getElementById('film-image').src = image;
 
-    <!-- QR-code section -->
-    <div id="qr-code"></div>
-
-    <script>
-        const seatingChart = document.getElementById('seating-chart');
-        let selectedSeats = [];
-
-        // Create an interactive layout of the hall (15x10 seats)
-        for (let i = 0; i < 150; i++) {
-             const seat = document.createElement('div');
-            seat.classList.add('seat');
-            seat.addEventListener('click', () => {
-                // Switch the state of the selected seat
-                seat.classList.toggle('selected');
-                // Add or remove a place from the array of selected ones
-                if (seat.classList.contains('selected')) {
-                    selectedSeats.push(seat);
-                } else {
-                    selectedSeats = selectedSeats.filter(s => s !== seat);
+            document.querySelector('form').addEventListener('submit', (event) => {
+                event.preventDefault(); // Prevent default form submission
+            
+                const fullName = document.querySelector('input[name="full_name"]').value;
+                const phone = document.querySelector('input[name="phone"]').value;
+                const email = document.querySelector('input[name="email"]').value;
+                const password = document.querySelector('input[name="password"]').value;
+            
+                // Validation
+                if (selectedSeats.length === 0) {
+                    alert('Виберіть, будь ласка, місце!');
+                    return;
+                } 
+                if (!fullName || !phone || !email || !password) {
+                    alert('Будь ласка, заповніть всі поля!');
+                    return;
                 }
-        });
-        seatingChart.appendChild(seat);
-        }
+            
+                // Phone format validation
+                const phonePattern = /^\+?[0-9]{10,14}$/; // Matches format +XXXXXXXXXX
+                if (!phone.match(phonePattern)) {
+                    alert('Неправильний формат номера телефону!');
+                    return;
+                }
+            
+                const seats = selectedSeats.map(seat => Array.from(seatingChart.children).indexOf(seat)).join(', ');
+                
+                // Send the data to the server
+                const data = new URLSearchParams({
+                    full_name: fullName,
+                    phone: phone,
+                    email: email,
+                    password: password,
+                    title: title,
+                    date: formattedDate,
+                    session: selectedSession,
+                    seats: seats
+                });
+            
+                fetch('/register', {
+                    method: 'POST',
+                    body: data,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url; // Redirect if the server sends a redirect response
+                    } else {
+                        return response.json(); // Handle other responses (e.g., errors)
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+                window.location.href = `ticket.html?title=${encodeURIComponent(title)}&date=${encodeURIComponent(formattedDate)}&session=${encodeURIComponent(selectedSession)}&seats=${encodeURIComponent(seats)}&full_name=${encodeURIComponent(fullName)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}`;
 
-        document.getElementById('submit').addEventListener('click', () => {
-            const fullName = document.getElementById('full_name').value;
-            const phone = document.getElementById('phone').value;
-            const email = document.getElementById('email').value;
-
-            if (selectedSeats.length === 0) {
-                alert('Виберіть, будь ласка, місце!');
-                return; 
-            }
-            if (fullName && phone && email) {
-                alert('Бронювання успішно створено!');
-            } else {
-                alert('Будь ласка, заповніть всі поля!');
-            }
-        });
-    </script>
+            });
+            
+            
+        </script>
+        
 </body>
 </html>

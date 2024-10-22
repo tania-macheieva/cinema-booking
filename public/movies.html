@@ -1,397 +1,410 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KinoBook - Вибір фільмів</title>
-    <style>
-        body {
-            font-family:  "Segoe UI","Open Sans","Helvetica Neue",sans-serif;
-            background-color: #f7f6f8;
-            color: #333;
-            padding: 0;
-            margin: 0;
-        }
+    <!DOCTYPE html>
+    <html lang="uk">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Фільми - KinoBook</title>
+        <style>
+            body {
+                font-family: "Segoe UI", "Open Sans", "Helvetica Neue", sans-serif;
+                background-color: #f7f6f8;
+                color: #333;
+                padding: 0;
+                margin: 0;
+            }
 
-        /* Navigation */
-        nav {
-            background-color: #213786;
-            padding: 15px;
-            width: 100%; 
-            font-weight: bold;
-        }
+            /* Navigation */
+            nav {
+                background-color: #213786;
+                padding: 15px;
+                width: 100%;
+                font-weight: bold;
+            }
 
-        nav ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center; 
-        }
+            nav ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: flex-start;
+            }
 
-        nav ul li {
-            margin: 0 10px; 
-        }
+            .logo {
+                color: white;
+                user-select: none;
+                margin: 0 10px;
+                padding-right: 7px;
+                font-size: 18px;
+            }
 
-        nav ul li a {
-            color: white; 
-            text-decoration: none; 
-            padding: 10px 15px; 
-            border-radius: 5px; 
-            transition: background-color 0.3s ease, color 0.3s ease; 
-        }
+            nav ul li a {
+                color: white;
+                text-decoration: none;
+                padding: 10px 15px;
+                border-radius: 5px;
+                transition: background-color 0.3s ease, color 0.3s ease;
+            }
 
-        nav ul li a:hover {
-            background-color: #ef9010; 
-            color: #333; 
-            text-decoration: none; 
-        }
-
-
-        /* Style for the date selection */
-        .date-selector {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 20px 0;
-        }
-
-        .date-item {
-            padding: 10px 20px;
-            cursor: pointer;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        .date-item.active {
-            color: #213786;
-            font-weight: bold;
-            border-bottom: 2px solid #213786;
-        }
-
-        .date-item span {
-            display: block;
-            font-size: 12px;
-            color: #666;
-        }
-
-        /* Style for movie list */
-        .movie-list {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        .movie {
-            display: flex;
-            width: 90%;
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .movie img {
-            width: 100px;
-            height: 150px;
-            border-radius: 10px;
-            margin-right: 20px;
-            cursor: pointer; 
-        }
-
-        .movie-info {
-            flex-grow: 1;
-            display: flex;
-        }
-
-        .movie-info-left {
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .movie-details{
-            margin-left: 30px;
-            margin-top: 0;
-            padding-top: 0;
-            justify-content: space-between;
-        }
-        .movie-info-right {
-            margin-left: 50px;
-            margin-right: 130px;
-            margin-top: -16px;
-        }
-
-        .movie-price-container {
-            display: flex;
-            align-items: center; /* Вертикальне центрирование */
-            justify-content: flex-start; /* Вирівнювання по горизонталі (можете змінити на flex-end для вирівнювання вправо) */
-            margin-top: 10px; /* Відступ зверху для відокремлення від інших елементів */
-        }
-
-        .movie-price {
-            font-size: 18px;
-            font-weight: bold;
-            color: #213786; 
-        }
+            nav ul li a:hover {
+                background-color: #ef9010;
+                color: #333;
+            }
 
 
-        .movie-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
+            /* Style for the date selection */
+            .date-selector {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 20px 0;
+                padding: 5px;
+                user-select: none;
+                background-color: #ffffff;
+            }
 
-        .movie-description {
-            max-width: 500px;
-            margin-bottom: 10px;
-        }
+            .date-items {
+                display: flex; /* Дати в рядок */
+                justify-content: center;
+                align-items: center;
+            }
 
-        .movie-sessions {
-            display: flex;
-            flex-wrap: wrap;
-        }
+            .date-item {
+                padding: 10px 20px;
+                cursor: pointer;
+                text-align: center;
+                font-size: 15px;
+                border: 1px solid transparent;
+                margin: 0 5px; /* Відстань між днями */
+                font-weight: bold;
+            }
 
-        .session {
-            background-color: #213786;
-            color: white;
-            padding: 7px 10px;
-            border-radius: 5px;
-            margin: 5px;
-            cursor: pointer;
-            user-select: none; 
-            font-size: 15px;
-            font-weight: bold;
-        }
-        .session.past {
-            background-color: #ccc; 
-            cursor: not-allowed; 
-        }
+            .date-item.active {
+                color: #213786;
+                border-bottom: 2px solid #213786;
+                border-radius: 12px;
+            }
 
-        .session.selected {
-            background-color: #ef9010; 
-            color: #333;
+            .date-item.active:hover {
+                color: #213786;
+                background-color: #ffffff;
+                border-bottom: 2px solid #213786;
+                border-radius: 12px;
+            }
+
+            .date-item.active span {
+                color: #213786;
+            }
+
+            .date-item:hover {
+                border-radius: 12px;
+                background-color: #eff1f6;
+            }
+
+            .date-item span {
+                display: block;
+                font-family: "Segoe UI", "Open Sans", "Helvetica Neue", sans-serif;
+                color: #333;
+            }
+
+            /* Style for navigation arrows */
+            .arrow {
+                font-size: 24px;
+                cursor: pointer;
+                margin: 0 15px;
+                user-select: none;
+            }
+
+            /* Style for movie list */
+            .movie-list {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-top: 20px;
+            }
+
+            .movie {
+                display: flex;
+                width: 90%;
+                background-color: #fff;
+                border-radius: 10px;
+                padding: 20px;
+                margin-bottom: 15px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .movie img {
+                width: 100px;
+                height: 150px;
+                border-radius: 10px;
+                margin-right: 20px;
+                cursor: pointer; 
+            }
+
+            .movie-info {
+                display: flex;
+                justify-content: space-between; 
+                align-items: center;  
+                width: 100%; 
+            }
+
+            .movie-info-left {
+                flex-grow: 1;
+            }
+
+            .movie-info-right {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;  
+                text-align: right; 
+            }
+
+            .movie-price-container {
+                display: flex;
+                justify-content: flex-end;  
+            }
+            .movie-rating {
+                font-weight: bold;  
+            }
+            .movie-price {
+                font-size: 18px;
+                font-weight: bold;
+                color: #213786; 
+            }
+
+            .movie-title {
+                font-size: 20px;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+
+            .movie-description {
+                max-width: 500px;
+                margin-bottom: 10px;
+            }
+
+            .movie-sessions {
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .session {
+                background-color: #213786;
+                color: white;
+                padding: 7px 10px;
+                border-radius: 5px;
+                margin: 5px;
+                cursor: pointer;
+                user-select: none; 
+                font-size: 15px;
+                font-weight: bold;
+            }
+
+            .session.past {
+                background-color: #ccc; 
+                cursor: not-allowed; 
+            }
+
+            .session.selected {
+                background-color: #ef9010; 
+                color: #333;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Navigation -->
+        <nav>
+            <ul>
+                <li class="logo">KinoBook</li>
+                <li><a href="index.html">Головна</a></li>
+                <li><a href="movies.html">Фільми</a></li>
+                <li><a href="tickets.html">Мої квитки</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main content -->
+        <main>
+            <!-- Date selector -->
+            <div class="date-selector" id="date-selector">
+                <span class="arrow" id="prev-date">&#9664;</span>
+                <div class="date-items" id="date-items">
+                    <div class="date-item" id="day-0"></div>
+                    <div class="date-item" id="day-1"></div>
+                    <div class="date-item" id="day-2"></div>
+                </div>
+                <span class="arrow" id="next-date">&#9654;</span>
+            </div>
+
+            <!-- Movie list -->
+            <div class="movie-list" id="movie-list">
+                <!-- Фільми будуть динамічно додаватися за допомогою JavaScript -->
+            </div>
+        </main>
+
+        <script>
+            let currentDate = new Date();
+            let startDateIndex = 0; // Індекс початку видимого періоду (0 - сьогодні)
+            let selectedDateIndex = 1; // Індекс вибраного дня (за замовчуванням середній день)
+
+            const moviesData = {}; // Змінна для зберігання даних фільмів (з бази даних)
+
+            const fetchMovies = async () => {
+                try {
+                    const response = await fetch('/api/movies'); // URL до вашого API для отримання фільмів
+                    const data = await response.json();
+                    data.forEach(movie => {
+                        const releaseDate = new Date(movie.release_date);
+                        const dateKey = releaseDate.getDate();
+                        if (!moviesData[dateKey]) {
+                            moviesData[dateKey] = [];
+                        }
+                        moviesData[dateKey].push({
+                            title: movie.title,
+                            genre: movie.genre,
+                            description: movie.long_description,
+                            image: movie.poster_url,
+                            rating: movie.rating,
+                            sessions: ["14:00", "16:00", "18:00"], 
+                            price: `140 грн`
+                        });
+                    });
+                    updateMovies();
+                } catch (error) {
+                    console.error('Помилка при отриманні фільмів:', error);
+                }
+            };
+
+            const updateMovies = () => {
+                const movieListDiv = document.getElementById('movie-list');
+                movieListDiv.innerHTML = '';
             
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation -->
-    <nav>
-        <ul>
-            <li><a href="index.html">Головна</a></li>
-            <li><a href="movies.html">Фільми</a></li>
-            <li><a href="about.html">Про нас</a></li>
-            <li><a href="contact.html">Контакти</a></li>
-        </ul>
-    </nav>
+                for (let i = 0; i < 3; i++) {
+                    const day = currentDate.getDate() + startDateIndex + i; // Вибір дати на основі стартового індексу
+                    const month = currentDate.getMonth() + 1; // Місяць
+                    const year = currentDate.getFullYear();
+            
+                    const dateKey = day;
+                    const movies = moviesData[dateKey];
+            
+                    if (movies) {
+                        movies.forEach(movie => {
+                            const movieDiv = document.createElement('div');
+                            movieDiv.className = 'movie';
+            
+                            movieDiv.innerHTML = `
+                                <img src="${movie.image}" alt="${movie.title}" class="movie-poster" data-title="${movie.title}" data-date="${day}" data-session=""/>
+                                <div class="movie-info">
+                                    <div class="movie-info-left">
+                                        <div class="movie-title">${movie.title}</div>
+                                        <div class="movie-genre">${movie.genre}</div>
+                                        <div class="movie-rating">${movie.rating}</div>
+                                        <div class="movie-description">${movie.description}</div>
+                                        <div class="movie-sessions"></div>
+                                    </div>
+                                    <div class="movie-info-right">
+                                        <div class="movie-price-container">
+                                            <div class="movie-price">${movie.price}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+            
+                            // Додаємо сеанси
+                            const movieSessionsDiv = movieDiv.querySelector('.movie-sessions');
+                            movie.sessions.forEach(session => {
+                                const sessionElement = document.createElement('div');
+                                const now = new Date();
+                                const sessionDate = new Date(currentDate);
+                                sessionDate.setDate(currentDate.getDate() + startDateIndex + i); // Дата на основі вибраного дня
+                                const [hour, minute] = session.split(':');
+                                sessionDate.setHours(hour, minute);
+                                const isPast = sessionDate < now;
+            
+                                sessionElement.className = `session ${isPast ? 'past' : ''}`;
+                                sessionElement.dataset.session = session;
+                                sessionElement.innerHTML = session;
+            
+                                // Додаємо обробник кліку для сеансу
+                                sessionElement.onclick = () => {
+                                    if (!isPast) {
+                                        const selectedSession = document.querySelector('.session.selected');
+                                        if (selectedSession) {
+                                            selectedSession.classList.remove('selected');
+                                        }
+                                        sessionElement.classList.add('selected');
+            
+                                        // Запам'ятовуємо вибраний сеанс
+                                        const moviePoster = movieDiv.querySelector('.movie-poster');
+                                        moviePoster.dataset.session = session; // Зберігаємо вибраний сеанс
+                                    }
+                                };
+            
+                                movieSessionsDiv.appendChild(sessionElement);
+                            });
+            
+                            // Додаємо обробник кліку для постера фільму
+                            const moviePoster = movieDiv.querySelector('.movie-poster');
+                            moviePoster.onclick = () => {
+                                const selectedSession = moviePoster.dataset.session;
+                                if (selectedSession) {
+                                    const selectedDate = new Date(currentDate); // Вибрана дата
+                                    selectedDate.setDate(currentDate.getDate() + startDateIndex + i); // Встановлюємо вибрану дату
+                                    const formattedDate = `${selectedDate.getDate()}.${selectedDate.getMonth() + 1}.${selectedDate.getFullYear()}`;
+            
+                                    // Перенаправлення на booking.html з параметрами
+                                    const movieTitle = movie.title; // Назва фільму
+                                    const movieImage = movie.image; // Зображення фільму
+                                    window.location.href = `booking.html?title=${encodeURIComponent(movieTitle)}&date=${encodeURIComponent(formattedDate)}&session=${encodeURIComponent(selectedSession)}&image=${encodeURIComponent(movieImage)}`;
 
-    <!-- Main content -->
-    <main>
-        <!-- Date selector -->
-        <div class="date-selector" id="date-selector">
-            <!-- Дати будуть додаватися динамічно через JavaScript -->
-        </div>
-        <!-- Movie list -->
-        <div class="movie-list" id="movie-list">
-            <!-- Фільми будуть динамічно додаватися за допомогою JavaScript -->
-        </div>
-    </main>
 
-    <script>
-        const moviesData = {
-            5: [
-                {
-                    title: "Фільм 1",
-                    description: "Це опис першого фільму.",
-                    image: "https://via.placeholder.com/100x150",
-                    sessions: ["12:00", "15:00", "18:00"],
-                    price: "140 ₴"
-                },
-                {
-                    title: "Фільм 2",
-                    description: "Це опис другого фільму. Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem eaque incidunt modi ipsam omnis temporibus deleniti officiis aperiam eius, voluptates doloremque tenetur reprehenderit, quod harum. Quidem beatae facere amet illum?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deserunt sint asperiores velit voluptates est tempore iusto adipisci, repellat cupiditate ex dolorum amet recusandae nisi dolores praesentium. ",
-                    image: "https://via.placeholder.com/100x150",
-                    sessions: ["13:00", "16:00", "19:00"],
-                    price: "140 ₴"
-                }
-            ],
-            6: [
-                {
-                    title: "Фільм 3",
-                    description: "Це опис третього фільму.",
-                    image: "https://via.placeholder.com/100x150",
-                    sessions: ["14:00", "17:00", "20:00"],
-                    price: "140 ₴"
-                },
-                {
-                    title: "Фільм 4",
-                    description: "Це опис четвертого фільму.",
-                    image: "https://via.placeholder.com/100x150",
-                    sessions: ["12:00", "16:00", "19:30"],
-                    price: "140 ₴"
-                }
-            ],
-            7: [
-                {
-                    title: "Фільм 5",
-                    description: "Це опис п'ятого фільму.",
-                    image: "https://via.placeholder.com/100x150",
-                    sessions: ["11:00", "14:00", "17:00"],
-                    price: "140 ₴"
-                }
-            ],
-            8: [
-                {
-                    title: "Фільм 6",
-                    description: "Це опис шостого фільму.",
-                    image: "https://via.placeholder.com/100x150",
-                    sessions: ["10:00", "13:00", "16:00"],
-                    price: "140 ₴"
-                }
-            ]
-        };
-
-        let selectedMovie = null; // Змінна для зберігання вибраного фільму
-        let selectedDate = null; // Змінна для зберігання вибраної дати
-        let selectedSession = null; // Змінна для зберігання вибраної години
-
-        function formatDate(date) {
-            const options = { day: 'numeric', month: 'long', weekday: 'long' };
-            return date.toLocaleDateString('uk-UA', options);
-        }
-
-        function displayDateSelector() {
-            const dateSelector = document.getElementById('date-selector');
-            const today = new Date();
-            for (let i = 0; i < 4; i++) {
-                const date = new Date(today);
-                date.setDate(today.getDate() + i);
-                const dateString = formatDate(date);
-
-                const dateItem = document.createElement('div');
-                dateItem.classList.add('date-item');
-                dateItem.setAttribute('data-day', date.getDate());
-                dateItem.setAttribute('data-date', date.toISOString().split('T')[0]); // Зберігаємо повну дату
-                dateItem.innerHTML = dateString;
-
-                if (i === 0) {
-                    dateItem.classList.add('active'); 
-                    displayMovies(date.getDate());
-                    selectedDate = dateItem.getAttribute('data-date'); // Встановлюємо вибрану дату
-                }
-
-                dateSelector.appendChild(dateItem);
-            }
-        }
-
-        function displayMovies(day) {
-            const movieList = document.getElementById('movie-list');
-            movieList.innerHTML = ''; 
-
-            const movies = moviesData[day];
-            const now = new Date();
-            const currentHour = now.getHours();
-            const currentMinutes = now.getMinutes();
-            const currentTime = currentHour * 60 + currentMinutes; 
-            const currentDate = new Date(); // Отримати поточну дату і час
-
-            movies.forEach(movie => {
-                const movieElement = document.createElement('div');
-                movieElement.classList.add('movie');
-                
-                movieElement.innerHTML = `
-                    <a href="#" class="movie-link" data-title="${movie.title}" data-image="${movie.image}" aria-label="${movie.title}">
-                        <img src="${movie.image}" alt="${movie.title} - постер">
-                    </a>
-                    <div class="movie-info">
-                        <div class="movie-info-left">
-                            <div class="movie-title">${movie.title}</div>
-                            <div class="movie-sessions">
-                                ${movie.sessions && movie.sessions.length > 0 ? 
-                                    movie.sessions.map(session => {
-                                        const [dateStr, timeStr] = session.split(' '); // Розділити дату і час
-                                        const sessionDate = new Date(`${dateStr}T${timeStr}`); // Створити об'єкт дати
-
-                                        const isPast = sessionDate < currentTime; // Перевірка, чи минуло
-                                        return `<div class="session ${isPast ? 'past' : ''}" data-time="${session}">${session}</div>`;
-                                    }).join('') : '<div class="no-sessions">Немає сеансів доступних</div>'
                                 }
-                            </div>
-                        </div>
-                        <div class="movie-details">
-                                <div>Вікове обмеження: <strong>${movie.ageRating}</strong></div>
-                                <div>Жанр: <strong>${movie.genre}</strong></div>
-                                <div>Країна: <strong>${movie.country}</strong></div>
-                                <div>Тривалість: <strong>${movie.duration}</strong></div>
-                                <div>Дата релізу: <strong>${movie.releaseDate}</strong></div>
-                                <div>Рейтинг: <strong>${movie.rating}</strong></div>
-                        </div>
-                        <div class="movie-info-right">
-                            <div class="movie-description"><p>${movie.description}</p></div>
-                            
-                        </div>
-                    </div>
-                    <div class="movie-price-container">
-                        <div class="movie-price">${movie.price}</div>
-                    </div>
-
-                `;
-
-
-                movieList.appendChild(movieElement);
-            });
-
-
-            // Додаємо обробник подій для фільмів
-            const movieLinks = document.querySelectorAll('.movie-link');
-            movieLinks.forEach(link => {
-                link.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    selectedMovie = link.getAttribute('data-title');
-                    const movieImage = link.getAttribute('data-image');
-
-                    const selectedSessionElement = document.querySelector('.session.selected');
-                    if (selectedSessionElement) {
-                        selectedSession = selectedSessionElement.getAttribute('data-time');
-                        window.location.href = `booking.html?date=${selectedDate}&time=${selectedSession}&title=${encodeURIComponent(selectedMovie)}&image=${encodeURIComponent(movieImage)}`;
-                    } else {
-                        alert('Будь ласка, оберіть годину сеансу.');
+                            };
+            
+                            movieListDiv.appendChild(movieDiv);
+                        });
                     }
-                });
-            });
+                }
+            };
 
-            // Додаємо обробник подій для сеансів
-const sessionElements = document.querySelectorAll('.session');
-sessionElements.forEach(session => {
-    session.addEventListener('click', function() {
-        // Якщо сеанс вже вибрано, скидаємо вибір
-        if (session.classList.contains('selected')) {
-            session.classList.remove('selected'); // Знімаємо вибір з цього сеансу
-            selectedSession = null; // Скидаємо вибір сеансу
-        } else {
-            sessionElements.forEach(s => s.classList.remove('selected')); // Знімаємо вибір з усіх сеансів
-            session.classList.add('selected'); // Додаємо вибір до обраного сеансу
-            selectedSession = session.getAttribute('data-time'); // Оновлюємо вибраний сеанс
-        }
-    });
-});
+            const updateDateItems = () => {
+                const dateItemsDiv = document.getElementById('date-items');
+                for (let i = 0; i < 3; i++) {
+                    const dateItem = document.getElementById(`day-${i}`);
+                    const date = new Date(currentDate);
+                    date.setDate(currentDate.getDate() + startDateIndex + i);
+                    dateItem.innerHTML = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+                    dateItem.onclick = () => {
+                        selectedDateIndex = i; // Оновлюємо індекс вибраного дня
+                        updateMovies(); // Оновлюємо фільми для вибраної дати
+                        const activeItem = document.querySelector('.date-item.active');
+                        if (activeItem) {
+                            activeItem.classList.remove('active');
+                        }
+                        dateItem.classList.add('active'); // Додаємо активний клас для вибраного дня
+                    };
+                    if (i === 1) {
+                        dateItem.classList.add('active'); // Вибір середнього дня за замовчуванням
+                    }
+                }
+            };
 
-        }
+            const nextDate = () => {
+                startDateIndex++;
+                updateDateItems();
+                updateMovies();
+            };
 
-        displayDateSelector();
+            const prevDate = () => {
+                startDateIndex--;
+                updateDateItems();
+                updateMovies();
+            };
 
-        // Event listener for date selection
-        document.getElementById('date-selector').addEventListener('click', (e) => {
-            if (e.target.classList.contains('date-item')) {
-                document.querySelectorAll('.date-item').forEach(item => item.classList.remove('active'));
-                e.target.classList.add('active');
+            document.getElementById('next-date').onclick = nextDate;
+            document.getElementById('prev-date').onclick = prevDate;
 
-                const selectedDay = e.target.getAttribute('data-day');
-                selectedDate = e.target.getAttribute('data-date'); // Оновлюємо вибрану дату
-                displayMovies(selectedDay);
-            }
-        });
-    </script>
-</body>
-</html>
+            // Завантажуємо фільми при завантаженні сторінки
+            fetchMovies();
+            updateDateItems();
+        </script>
+    </body>
+    </html>
