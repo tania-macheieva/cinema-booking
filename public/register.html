@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Реєстрація - KinoBook</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background-color: #f7f6f8;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #213786;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #ef9010;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Реєстрація</h2>
+        <form action="/register" method="POST" id="registerForm"> 
+            <input type="full_name" name="full_name" placeholder="Full name" required>
+            <input type="phone" name="phone" placeholder="Phone" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Зареєструватися</button>
+        </form>
+        <p>Вже маєте обліковий запис? <a href="login.html">Увійти</a></p>
+    </div>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Зупинити стандартну поведінку
+
+            const formData = new FormData(this);
+            const data = {
+                full_name: formData.get('full_name'),
+                phone: formData.get('phone'),
+                email: formData.get('email'),
+                password: formData.get('password')
+            };
+
+            // Відправити дані на сервер для реєстрації
+            fetch('/register', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Перенаправлення на booking.html з параметрами
+                    window.location.href = `booking.html?full_name=${encodeURIComponent(data.full_name)}&phone=${encodeURIComponent(data.phone)}&email=${encodeURIComponent(data.email)}`;
+                } else {
+                    alert('Сталася помилка під час реєстрації. Спробуйте ще раз.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>

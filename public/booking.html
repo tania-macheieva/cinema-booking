@@ -8,7 +8,7 @@
 
     <style>
         body {
-            font-family: "Segoe UI","Open Sans","Helvetica Neue",sans-serif;
+            font-family: "Segoe UI", "Open Sans", "Helvetica Neue", sans-serif;
             background-color: #f7f6f8;
             color: #333;
             text-align: center;
@@ -104,31 +104,6 @@
             align-items: center;
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start; 
-            width: 790px;
-        }
-
-        .form-group label {
-            font-size: 15px;
-            align-items: center; 
-        }
-
-        .form-container input {
-            padding: 10px;
-            margin: 10px 0;
-            width: 100%;
-            font-size: 16px;
-            border-radius: 12px;
-            border: .1px solid #636363;
-        }
-
-        .form-container input:hover {
-            outline: 1px solid #213786; 
-        }
-
         .form-container button {
             padding: 10px 20px;
             background-color: #213786;
@@ -175,62 +150,34 @@
         </ul>
     </nav>
 
-
     <h1>Бронювання квитків на фільм</h1>
-
+                
     <!-- Film information section -->
     <div class="film-info">
         <h2 id="film-title">Назва фільму</h2>
         <img id="film-image" src="" alt="Зображення фільму"> 
     </div>
 
-    <div class="screen">Екран </div> 
+    <div class="screen">Екран</div> 
     <div class="seating-chart" id="seating-chart">
         <!-- Each place is created with JS -->
     </div>
-    
-    <!-- Form for entering information -->  
-        
-        <form action="/register" method="POST">
-            <div class="form-container">
-                <div class="form-group">
-                    <label for="full_name">Повне ім'я</label>                  
-                    <input type="text" name="full_name" placeholder="Full Name" required>
-                </div>
-            
-                <div class="form-group">
-                    <label for="phone">Номер телефону</label>
-                    <input type="text" name="phone" placeholder="Phone" required>
-                </div>
-            
-                <div class="form-group">
-                    <label for="email">Електронна пошта</label>
-                        <input type="email" name="email" placeholder="Email" required>
-                </div>
-        
-                <div class="form-group">
-                    <label for="password">Пароль</label> 
-                    <input type="password" name="password" placeholder="Password" required>
-                </div>
-            </div>  
-             
-            <div class="form-container"> 
-                <button type="submit" id="submit">Забронювати</button>
-            </div> 
-        </form> 
-        
-    
 
-        <script>
-            const seatingChart = document.getElementById('seating-chart');
-            let selectedSeats = [];
-        
-            // Create an interactive layout of the hall (15x10 seats)
-            for (let i = 0; i < 150; i++) {
-                const seat = document.createElement('div');
-                seat.classList.add('seat');
-                seat.addEventListener('click', () => {
-                    // Toggle seat selection state
+    <div class="form-container"> 
+        <button id="book-btn">Забронювати</button>
+    </div>
+
+    <script>
+        const seatingChart = document.getElementById('seating-chart');
+        let selectedSeats = [];
+
+        // Create an interactive layout of the hall (15x10 seats)
+        for (let i = 0; i < 150; i++) {
+            const seat = document.createElement('div');
+            seat.classList.add('seat');
+            seat.addEventListener('click', () => {
+                // Toggle seat selection state
+                if (!seat.classList.contains('occupied')) {
                     seat.classList.toggle('selected');
                     // Update selected seats array
                     if (seat.classList.contains('selected')) {
@@ -238,80 +185,44 @@
                     } else {
                         selectedSeats = selectedSeats.filter(s => s !== seat);
                     }
-                });
-                seatingChart.appendChild(seat);
-            }
-        
-            // Отримуємо параметри з URL
-            const params = new URLSearchParams(window.location.search);
-            const title = params.get('title');
-            const image = params.get('image');
-            const formattedDate = params.get('date') || 'Дата не обрана';
-            const selectedSession = params.get('session') || 'Час не обраний';
-        
-            document.getElementById('film-title').innerText = title;
-            document.getElementById('film-image').src = image;
-
-            document.querySelector('form').addEventListener('submit', (event) => {
-                event.preventDefault(); // Prevent default form submission
-            
-                const fullName = document.querySelector('input[name="full_name"]').value;
-                const phone = document.querySelector('input[name="phone"]').value;
-                const email = document.querySelector('input[name="email"]').value;
-                const password = document.querySelector('input[name="password"]').value;
-            
-                // Validation
-                if (selectedSeats.length === 0) {
-                    alert('Виберіть, будь ласка, місце!');
-                    return;
-                } 
-                if (!fullName || !phone || !email || !password) {
-                    alert('Будь ласка, заповніть всі поля!');
-                    return;
+                    updateSelectedSeatsCount(); // Update count
                 }
-            
-                // Phone format validation
-                const phonePattern = /^\+?[0-9]{10,14}$/; // Matches format +XXXXXXXXXX
-                if (!phone.match(phonePattern)) {
-                    alert('Неправильний формат номера телефону!');
-                    return;
-                }
-            
-                const seats = selectedSeats.map(seat => Array.from(seatingChart.children).indexOf(seat)).join(', ');
-                
-                // Send the data to the server
-                const data = new URLSearchParams({
-                    full_name: fullName,
-                    phone: phone,
-                    email: email,
-                    password: password,
-                    title: title,
-                    date: formattedDate,
-                    session: selectedSession,
-                    seats: seats
-                });
-            
-                fetch('/register', {
-                    method: 'POST',
-                    body: data,
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    }
-                })
-                .then(response => {
-                    if (response.redirected) {
-                        window.location.href = response.url; // Redirect if the server sends a redirect response
-                    } else {
-                        return response.json(); // Handle other responses (e.g., errors)
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-                window.location.href = `ticket.html?title=${encodeURIComponent(title)}&date=${encodeURIComponent(formattedDate)}&session=${encodeURIComponent(selectedSession)}&seats=${encodeURIComponent(seats)}&full_name=${encodeURIComponent(fullName)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}`;
-
             });
-            
-            
-        </script>
-        
+            seatingChart.appendChild(seat);
+        }
+
+        // Get parameters from URL
+        const params = new URLSearchParams(window.location.search);
+        const title = params.get('title');
+        const image = params.get('image');
+        const formattedDate = params.get('date') || 'Дата не обрана';
+        const selectedSession = params.get('session') || 'Час не обраний';
+        const fullName = localStorage.getItem('full_name');
+        const phone = localStorage.getItem('phone');
+        const email = localStorage.getItem('email');
+
+        document.getElementById('film-title').innerText = title;
+        document.getElementById('film-image').src = image;
+
+        document.getElementById('book-btn').addEventListener('click', () => {
+            // Validation
+            if (selectedSeats.length === 0) {
+                alert('Виберіть, будь ласка, місце!');
+                return;
+            } 
+
+            const seats = selectedSeats.map(seat => Array.from(seatingChart.children).indexOf(seat)).join(', ');
+
+            // Redirect to ticket.html with the necessary data
+            window.location.href = `ticket.html?title=${encodeURIComponent(title)}&date=${encodeURIComponent(formattedDate)}&session=${encodeURIComponent(selectedSession)}&seats=${encodeURIComponent(seats)}&full_name=${encodeURIComponent(fullName)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}`; 
+        }); 
+
+        function updateSelectedSeatsCount() {
+            // Optional: Update the count or display of selected seats
+            console.log(`Кількість вибраних місць: ${selectedSeats.length}`);
+        }
+
+        console.log('User Data:', { fullName, phone, email });
+    </script>
 </body>
 </html>

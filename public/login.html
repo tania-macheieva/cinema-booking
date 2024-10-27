@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вхід - KinoBook</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background-color: #f7f6f8;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        h2 {
+            text-align: center;
+        }
+        input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #213786;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #ef9010;
+        }
+        .error-message {
+            color: red;
+            text-align: center;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Вхід</h2>
+        <div class="error-message" id="errorMessage"></div>
+        <form id="loginForm">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Пароль" required>
+            <button type="submit">Увійти</button>
+        </form>
+        <p>Ще не маєте облікового запису? <a href="register.html">Реєстрація</a></p>
+    </div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Зупинити стандартну поведінку
+
+            const formData = new FormData(this);
+            const data = {
+                email: formData.get('email'),
+                password: formData.get('password')
+            };
+
+            // Очищення повідомлення про помилку
+            document.getElementById('errorMessage').textContent = '';
+
+            // Відправити дані на сервер для входу
+            fetch('/login', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Неправильний логін або пароль.');
+                }
+            })
+            .then(user => {
+                // Зберегти дані у localStorage
+                localStorage.setItem('full_name', user.full_name);
+                localStorage.setItem('phone', user.phone);
+                localStorage.setItem('email', user.email);
+                
+                // Перенаправити користувача на сторінку бронювання
+                window.location.href = `booking.html?full_name=${encodeURIComponent(user.full_name)}&phone=${encodeURIComponent(user.phone)}&email=${encodeURIComponent(user.email)}`;
+            })
+            .catch(error => {
+                // Відобразити повідомлення про помилку
+                document.getElementById('errorMessage').textContent = error.message;
+            });
+        });
+    </script>
+</body>
+</html>
