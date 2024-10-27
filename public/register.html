@@ -80,7 +80,7 @@
             .then(response => {
                 if (response.ok) {
                     // Перенаправлення на booking.html з параметрами
-                    window.location.href = `booking.html?full_name=${encodeURIComponent(data.full_name)}&phone=${encodeURIComponent(data.phone)}&email=${encodeURIComponent(data.email)}`;
+                    window.location.href = `index.html?full_name=${encodeURIComponent(data.full_name)}&phone=${encodeURIComponent(data.phone)}&email=${encodeURIComponent(data.email)}`;
                 } else {
                     alert('Сталася помилка під час реєстрації. Спробуйте ще раз.');
                 }

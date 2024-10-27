@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>KinoBook - Квиток</title>
     <style>
         body {
@@ -65,7 +64,6 @@
 </head>
 <body>
     <h1>Ваш квиток на фільм</h1>
-
     <div class="ticket">
         <h2 id="film-title">Назва фільму</h2>
         <p><strong>Дата:</strong> <span id="film-date"></span></p>
@@ -75,24 +73,18 @@
         <p><strong>Телефон:</strong> <span id="phone"></span></p>
         <p><strong>Електронна пошта:</strong> <span id="email"></span></p>
     </div>
-
     <div class="qr-code" id="qr-code"></div>
-    <!-- QR Code will be displayed here -->
-
-    <button onclick="window.location.href='movies.html'">Повернутися до бронювання</button>
 
     <script>
-        // Отримуємо параметри з URL
         const params = new URLSearchParams(window.location.search);
-        const title = params.get('title') || 'Невідома назва';
-        const date = params.get('date') || 'Невідома дата';
-        const session = params.get('session') || 'Невідомий час';
-        const seats = params.get('seats') || 'Не вибрано';
-        const full_name = params.get('full_name') || 'Невідоме ім\'я';
-        const phone = params.get('phone') || 'Невідомий телефон';
-        const email = params.get('email') || 'Невідома електронна пошта';
+        const title = params.get('title');
+        const date = params.get('date');
+        const session = params.get('session');
+        const seats = params.get('seats');
+        const full_name = params.get('full_name');
+        const phone = params.get('phone');
+        const email = params.get('email');
 
-        // Відображення даних на сторінці
         document.getElementById('film-title').innerText = title;
         document.getElementById('film-date').innerText = date;
         document.getElementById('film-session').innerText = session;
@@ -101,15 +93,43 @@
         document.getElementById('phone').innerText = phone;
         document.getElementById('email').innerText = email;
 
-        // Генерація QR-коду для даних квитка
         function generateQRCode(text) {
             const qrCode = document.createElement('img');
             qrCode.src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(text)}&size=200x200`;
             document.getElementById('qr-code').appendChild(qrCode);
-        } 
+            saveTicket(qrCode.src);
+        }
 
         const ticketData = `Фільм: ${title}\nДата: ${date}\nЧас: ${session}\nМісця: ${seats}\nІм'я: ${full_name}\nТелефон: ${phone}\nEmail: ${email}`;
         generateQRCode(ticketData);
+
+        async function saveTicket(ticketData) {
+            const data = {
+                customer_id: 1,
+                session: session,
+                seat_number: seats,
+                price: '140.00',
+                purchase_date: date,                
+                qr_code: ticketData
+            };
+        
+            try {
+                const response = await fetch('/api/tickets', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) {
+                    throw new Error('Помилка збереження квитка');
+                }
+                const result = await response.json();
+                console.log(result.message);
+            } catch (error) {
+                console.error('Помилка при збереженні квитка:', error);
+                alert(`Не вдалося зберегти квиток: ${error.message}`);
+            }
+        }
+        
     </script>
 </body>
 </html>

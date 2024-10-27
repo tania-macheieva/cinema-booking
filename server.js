@@ -7,9 +7,7 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 const { body, validationResult } = require('express-validator');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
-
-
+ 
 const app = express();
 const PORT = 3000;
 
@@ -17,7 +15,7 @@ const PORT = 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(session({
-    secret: process.env.SESSION_SECRET, // Використовуємо секрет з .env
+    secret: process.env.SESSION_SECRET,  
     resave: false,
     saveUninitialized: true,
 }));
@@ -172,6 +170,19 @@ app.post('/register', [
 });
 
 
+app.post('/api/tickets', (req, res) => { 
+    const { customer_id, session_time, seat_number, price, qr_code } = req.body;
+    const purchase_date = new Date();
+
+    const query = 'INSERT INTO tickets (customer_id, session_time, seat_number, price, purchase_date, qr_code) VALUES (?, ?, ?, ?, ?, ?)';
+    db.query(query, [customer_id, session_time,seat_number, price, purchase_date, qr_code], (err, result) => {
+        if (err) {
+            console.error('Помилка при збереженні квитка в базі:', err);
+            return res.status(500).json({ error: 'Не вдалося зберегти квиток' });
+        }
+        res.status(200).json({ message: 'Квиток успішно збережено', ticketId: result.insertId });
+    });
+});
 
 
   
@@ -220,31 +231,35 @@ app.post('/book', (req, res) => {
 
 // Обробка створення сесії оплати
 app.post('/create-checkout-session', async (req, res) => {
-    const { title, price, date, session, seats, full_name, phone, email } = req.body;
+    const { title, price, date, session_time, seats, full_name, phone, email } = req.body;
 
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [{
                 price_data: {
-                    currency: 'usd',
+                    currency: 'uah', // Валюта
                     product_data: {
                         name: title,
-                        description: `Сеанс: ${session}, Дата: ${date}, Місця: ${seats}`
+                        description: `Сеанс: ${session_time}, Дата: ${date}, Місця: ${seats}`,
                     },
-                    unit_amount: price * 100
+                    unit_amount: price, // Вартість у копійках
                 },
-                quantity: 1
+                quantity: 1,
             }],
             mode: 'payment',
-            success_url: `${req.headers.origin}/ticket.html?title=${encodeURIComponent(title)}&date=${encodeURIComponent(date)}&session=${encodeURIComponent(session)}&seats=${encodeURIComponent(seats)}&full_name=${encodeURIComponent(full_name)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}`,
-            cancel_url: `${req.headers.origin}/movies.html`
+            success_url: `${req.headers.origin}/ticket.html?title=${encodeURIComponent(title)}&date=${encodeURIComponent(date)}&session=${encodeURIComponent(session_time)}&seats=${encodeURIComponent(seats)}&full_name=${encodeURIComponent(full_name)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}`,
+            cancel_url: `${req.headers.origin}/movies.html`,
         });
-        res.json({ id: session.id });
+        
+        res.json({ url: session.url });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
+
+
+
 
 // Обробка помилок
 app.use((err, req, res, next) => {

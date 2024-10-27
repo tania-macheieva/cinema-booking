@@ -205,20 +205,17 @@
         document.getElementById('film-image').src = image;
 
         document.getElementById('book-btn').addEventListener('click', () => {
-            // Validation
             if (selectedSeats.length === 0) {
-                alert('Виберіть, будь ласка, місце!');
+                alert('Виберіть місце!');
                 return;
-            } 
-
+            }
+        
             const seats = selectedSeats.map(seat => Array.from(seatingChart.children).indexOf(seat)).join(', ');
+            window.location.href = `payment.html?title=${encodeURIComponent(title)}&date=${encodeURIComponent(formattedDate)}&session=${encodeURIComponent(selectedSession)}&seats=${encodeURIComponent(seats)}&full_name=${encodeURIComponent(fullName)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}`;
+        });
+        
 
-            // Redirect to ticket.html with the necessary data
-            window.location.href = `ticket.html?title=${encodeURIComponent(title)}&date=${encodeURIComponent(formattedDate)}&session=${encodeURIComponent(selectedSession)}&seats=${encodeURIComponent(seats)}&full_name=${encodeURIComponent(fullName)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}`; 
-        }); 
-
-        function updateSelectedSeatsCount() {
-            // Optional: Update the count or display of selected seats
+        function updateSelectedSeatsCount() {   
             console.log(`Кількість вибраних місць: ${selectedSeats.length}`);
         }
 

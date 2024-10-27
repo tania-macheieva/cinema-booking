@@ -66,7 +66,7 @@
     </div>
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Зупинити стандартну поведінку
+            event.preventDefault();  
 
             const formData = new FormData(this);
             const data = {
@@ -99,7 +99,7 @@
                 localStorage.setItem('email', user.email);
                 
                 // Перенаправити користувача на сторінку бронювання
-                window.location.href = `booking.html?full_name=${encodeURIComponent(user.full_name)}&phone=${encodeURIComponent(user.phone)}&email=${encodeURIComponent(user.email)}`;
+                window.location.href = `index.html?full_name=${encodeURIComponent(user.full_name)}&phone=${encodeURIComponent(user.phone)}&email=${encodeURIComponent(user.email)}`;
             })
             .catch(error => {
                 // Відобразити повідомлення про помилку
