@@ -195,8 +195,8 @@
         const params = new URLSearchParams(window.location.search);
         const title = params.get('title');
         const image = params.get('image');
-        const formattedDate = params.get('date') || 'Дата не обрана';
-        const selectedSession = params.get('session') || 'Час не обраний';
+        const formattedDate = params.get('session_date') || 'Дата не обрана';
+        const selectedSession = params.get('session_time') || 'Час не обраний';
         const fullName = localStorage.getItem('full_name');
         const phone = localStorage.getItem('phone');
         const email = localStorage.getItem('email');
@@ -211,7 +211,7 @@
             }
         
             const seats = selectedSeats.map(seat => Array.from(seatingChart.children).indexOf(seat)).join(', ');
-            window.location.href = `payment.html?title=${encodeURIComponent(title)}&date=${encodeURIComponent(formattedDate)}&session=${encodeURIComponent(selectedSession)}&seats=${encodeURIComponent(seats)}&full_name=${encodeURIComponent(fullName)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}`;
+            window.location.href = `payment.html?title=${encodeURIComponent(title)}&session_date=${encodeURIComponent(formattedDate)}&session_time=${encodeURIComponent(selectedSession)}&seats=${encodeURIComponent(seats)}&full_name=${encodeURIComponent(fullName)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}`;
         });
         
 
@@ -219,7 +219,48 @@
             console.log(`Кількість вибраних місць: ${selectedSeats.length}`);
         }
 
-        console.log('User Data:', { fullName, phone, email });
+        async function fetchOccupiedSeats() {
+            try {
+                const response = await fetch(`/api/occupied-seats?session_time=${encodeURIComponent(session_time)}&session_date=${encodeURIComponent(session_date)}`);
+                const occupiedSeats = await response.json();
+                
+                // Позначаємо зайняті місця класом `.occupied`
+                occupiedSeats.forEach(seatNumber => {
+                    const seat = seatingChart.children[seatNumber];
+                    if (seat) {
+                        seat.classList.add('occupied');
+                        seat.removeEventListener('click', toggleSeatSelection);
+                    }
+                });
+            } catch (error) {
+                console.error('Помилка при отриманні зайнятих місць:', error);
+            }
+        }
+
+        // Функція для перемикання вибору місць
+        function toggleSeatSelection() {
+            if (!this.classList.contains('occupied')) { // Перевірка, чи не є місце зайнятим
+                this.classList.toggle('selected');
+                if (this.classList.contains('selected')) {
+                    selectedSeats.push(this);
+                } else {
+                    selectedSeats = selectedSeats.filter(seat => seat !== this);
+                }
+                console.log(`Кількість вибраних місць: ${selectedSeats.length}`);
+            }
+        }
+
+        // Ініціалізація розташування місць і додавання обробника події
+        for (let i = 0; i < 150; i++) {
+            const seat = document.createElement('div');
+            seat.classList.add('seat');
+            seat.addEventListener('click', toggleSeatSelection);
+            seatingChart.appendChild(seat);
+        }
+
+        // Виклик функції для позначення зайнятих місць
+        fetchOccupiedSeats();
+
     </script>
 </body>
 </html>

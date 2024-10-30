@@ -1,135 +1,173 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KinoBook - Квиток</title>
-    <style>
-        body {
-            font-family: "Segoe UI", "Open Sans", "Helvetica Neue", sans-serif;
-            background-color: #f7f6f8;
-            color: #333;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .ticket {
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px auto;
-            width: 80%;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 0.5s forwards;
-        }
-
-        .qr-code {
-            margin-top: 20px;
-            justify-content: right;
-            animation: fadeIn 0.5s forwards;
-        }
-        
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
+    <!DOCTYPE html>
+    <html lang="uk">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>KinoBook - Квиток</title>
+        <style>
+            body {
+                font-family: "Segoe UI", "Open Sans", "Helvetica Neue", sans-serif;
+                background-color: #f7f6f8;
+                color: #333;
+                text-align: center;
+                padding: 20px;
             }
-        }
-        
-        .qr-code img {
-            display: block;
-            margin: 20px auto; 
-            border: 2px solid #213786;
-            border-radius: 10px;
-            padding: 10px;
-            background-color: #fff;
-        }
 
-        button {
-            padding: 10px 20px;
-            background-color: #213786;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 12px;
-            margin-top: 20px;
-            transition: background-color 0.3s ease;
-        }
+            .ticket {
+                background-color: #fff;
+                border: 1px solid #ccc;
+                border-radius: 10px;
+                padding: 20px;
+                margin: 20px auto;
+                width: 80%;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                animation: fadeIn 0.5s forwards;
+                display: flex; /* Використовується для флекс-контейнера */
+                align-items: center; /* Центруємо елементи по вертикалі */
+                justify-content: center; /* Центруємо контент по горизонталі */
+            }
 
-        button:hover {
-            background-color: #263e97;
-        }
-    </style>
-</head>
-<body>
-    <h1>Ваш квиток на фільм</h1>
-    <div class="ticket">
-        <h2 id="film-title">Назва фільму</h2>
-        <p><strong>Дата:</strong> <span id="film-date"></span></p>
-        <p><strong>Час:</strong> <span id="film-session"></span></p>
-        <p><strong>Місця:</strong> <span id="selected-seats"></span></p>
-        <p><strong>Ім'я:</strong> <span id="full_name"></span></p>
-        <p><strong>Телефон:</strong> <span id="phone"></span></p>
-        <p><strong>Електронна пошта:</strong> <span id="email"></span></p>
-    </div>
-    <div class="qr-code" id="qr-code"></div>
+            .ticket-details {
+                margin-right: 20px; /* Відстань між текстом та QR-кодом */
+                text-align: left  ; /* Вирівнюємо текст зліва */
+            }
 
-    <script>
-        const params = new URLSearchParams(window.location.search);
-        const title = params.get('title');
-        const date = params.get('date');
-        const session = params.get('session');
-        const seats = params.get('seats');
-        const full_name = params.get('full_name');
-        const phone = params.get('phone');
-        const email = params.get('email');
+            .qr-code {
+                display: inline-block; /* QR-код буде рядковим блоком */
+                animation: fadeIn 0.5s forwards;
+            }
 
-        document.getElementById('film-title').innerText = title;
-        document.getElementById('film-date').innerText = date;
-        document.getElementById('film-session').innerText = session;
-        document.getElementById('selected-seats').innerText = seats;
-        document.getElementById('full_name').innerText = full_name;
-        document.getElementById('phone').innerText = phone;
-        document.getElementById('email').innerText = email;
-
-        function generateQRCode(text) {
-            const qrCode = document.createElement('img');
-            qrCode.src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(text)}&size=200x200`;
-            document.getElementById('qr-code').appendChild(qrCode);
-            saveTicket(qrCode.src);
-        }
-
-        const ticketData = `Фільм: ${title}\nДата: ${date}\nЧас: ${session}\nМісця: ${seats}\nІм'я: ${full_name}\nТелефон: ${phone}\nEmail: ${email}`;
-        generateQRCode(ticketData);
-
-        async function saveTicket(ticketData) {
-            const data = {
-                customer_id: 1,
-                session: session,
-                seat_number: seats,
-                price: '140.00',
-                purchase_date: date,                
-                qr_code: ticketData
-            };
-        
-            try {
-                const response = await fetch('/api/tickets', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                if (!response.ok) {
-                    throw new Error('Помилка збереження квитка');
+            @keyframes fadeIn {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
                 }
-                const result = await response.json();
-                console.log(result.message);
-            } catch (error) {
-                console.error('Помилка при збереженні квитка:', error);
-                alert(`Не вдалося зберегти квиток: ${error.message}`);
             }
-        }
+
+            .qr-code img {
+                display: block;
+                margin: 20px auto; 
+                border: 2px solid #213786;
+                border-radius: 10px;
+                padding: 10px;
+                background-color: #fff;
+            }
+
+
+            button {
+                padding: 10px 20px;
+                background-color: #213786;
+                color: white;
+                border: none;
+                cursor: pointer;
+                height: 45px;
+                width: 350px;
+                border-radius: 12px;
+                font-size: 16px;
+                font-weight: bold;
+                transition: background-color 0.3s ease, transform 0.2s ease;
+            }
+
+            button:hover {
+                background-color: #263e97;
+                transform: scale(1.05);
+            }
+
+        </style>
+    </head>
+    <body>
+        <h1>Ваш квиток на фільм</h1>
+        <div class="ticket">
+            <div class="ticket-details">
+                <h2 id="film-title">Назва фільму</h2>
+                <p><strong>Дата:</strong> <span id="film-date"></span></p>
+                <p><strong>Час:</strong> <span id="film-session"></span></p>
+                <p><strong>Місця:</strong> <span id="selected-seats"></span></p>
+                <p><strong>Ім'я:</strong> <span id="full_name"></span></p>
+                <p><strong>Телефон:</strong> <span id="phone"></span></p>
+                <p><strong>Електронна пошта:</strong> <span id="email"></span></p>
+            </div>
+            <div class="qr-code" id="qr-code"></div>
+        </div>
         
-    </script>
-</body>
-</html>
+        <button onclick="goBack()">Повернутися</button>
+
+        <script>
+            const params = new URLSearchParams(window.location.search);
+            const title = params.get('title');
+            const session_date = params.get('session_date');
+            const session_time = params.get('session_time');
+            const seats = params.get('seats');
+            const full_name = params.get('full_name');
+            const phone = params.get('phone');
+            const email = params.get('email'); 
+
+            document.getElementById('film-title').innerText = title;
+            document.getElementById('film-date').innerText = session_date;
+            document.getElementById('film-session').innerText = session_time;
+            document.getElementById('selected-seats').innerText = seats;
+            document.getElementById('full_name').innerText = full_name;
+            document.getElementById('phone').innerText = phone;
+            document.getElementById('email').innerText = email;
+
+            function generateQRCode(text) {
+                const qrCode = document.createElement('img');
+                qrCode.src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(text)}&size=200x200`;
+                document.getElementById('qr-code').appendChild(qrCode);
+                saveTicket(qrCode.src);
+            }
+
+                const ticketData = `Фільм: ${title}\nДата: ${session_date}\nЧас: ${session_time}\nМісця: ${seats}\nІм'я: ${full_name}\nТелефон: ${phone}\nEmail: ${email}`;
+            generateQRCode(ticketData);
+
+            async function saveTicket(ticketData) {
+                // Перевірка наявності квитка у локальному зберіганні
+                const ticketKey = `ticket_${email}_${title}_${session_date}_${session_time}_${seats}`;
+                
+                // Якщо квиток вже збережено, виходимо
+                if (localStorage.getItem(ticketKey)) {
+                    console.log('Квиток вже збережено, повторне збереження не буде виконано.');
+                    alert('Квиток вже збережено.'); // Інформуємо користувача
+                    return; 
+                }
+            
+                const data = { 
+                    title: title,
+                    session_time: session_time,
+                    session_date: session_date,
+                    customer_email: email,
+                    seat_number: seats,
+                    price: '140.00',        
+                    qr_code: ticketData
+                };
+            
+                try {
+                    const response = await fetch('/api/ticket', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                
+                    // Перевіряємо статус відповіді
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Помилка збереження квитка');
+                    }
+                
+                    const result = await response.json();
+                    console.log(result.message);
+                
+                    // Логіка збереження в локальному зберіганні...
+                } catch (error) {
+                    console.error('Помилка при збереженні квитка:', error);
+                 }
+                
+            }
+            
+            
+            function goBack() {
+                window.location.href = '/movies.html';
+            }
+        </script>
+    </body>
+    </html>
