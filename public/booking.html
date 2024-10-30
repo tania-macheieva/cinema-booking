@@ -264,14 +264,6 @@
             }
         }
 
-        // Ініціалізація розташування місць і додавання обробника події
-        for (let i = 0; i < 150; i++) {
-            const seat = document.createElement('div');
-            seat.classList.add('seat');
-            seat.addEventListener('click', toggleSeatSelection);
-            seatingChart.appendChild(seat);
-        }
-
         // Виклик функції для отримання зайнятих місць
         fetchOccupiedSeats();
 
