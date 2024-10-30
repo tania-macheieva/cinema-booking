@@ -187,7 +187,7 @@
                 flex-wrap: wrap;
             }
 
-            .session {
+            .session_time {
                 background-color: #213786;
                 color: white;
                 padding: 7px 10px;
@@ -199,12 +199,12 @@
                 font-weight: bold;
             }
 
-            .session.past {
+            .session_time.past {
                 background-color: #ccc; 
                 cursor: not-allowed; 
             }
 
-            .session.selected {
+            .session_time.selected {
                 background-color: #ef9010; 
                 color: #333;
             }
@@ -310,23 +310,23 @@
             
                             // Додаємо сеанси
                             const movieSessionsDiv = movieDiv.querySelector('.movie-sessions');
-                            movie.sessions.forEach(session => {
+                            movie.sessions.forEach(session_time => {
                                 const sessionElement = document.createElement('div');
                                 const now = new Date();
                                 const sessionDate = new Date(currentDate);
                                 sessionDate.setDate(currentDate.getDate() + startDateIndex + i); // Дата на основі вибраного дня
-                                const [hour, minute] = session.split(':');
+                                const [hour, minute] = session_time.split(':');
                                 sessionDate.setHours(hour, minute);
                                 const isPast = sessionDate < now;
             
-                                sessionElement.className = `session ${isPast ? 'past' : ''}`;
-                                sessionElement.dataset.session = session;
-                                sessionElement.innerHTML = session;
+                                sessionElement.className = `session_time ${isPast ? 'past' : ''}`;
+                                sessionElement.dataset.session_time = session_time;
+                                sessionElement.innerHTML = session_time;
             
                                 // Додаємо обробник кліку для сеансу
                                 sessionElement.onclick = () => {
                                     if (!isPast) {
-                                        const selectedSession = document.querySelector('.session.selected');
+                                        const selectedSession = document.querySelector('.session_time.selected');
                                         if (selectedSession) {
                                             selectedSession.classList.remove('selected');
                                         }
@@ -334,7 +334,7 @@
             
                                         // Запам'ятовуємо вибраний сеанс
                                         const moviePoster = movieDiv.querySelector('.movie-poster');
-                                        moviePoster.dataset.session = session; // Зберігаємо вибраний сеанс
+                                        moviePoster.dataset.session_time = session_time; // Зберігаємо вибраний сеанс
                                     }
                                 };
             
@@ -344,7 +344,7 @@
                             // Додаємо обробник кліку для постера фільму
                             const moviePoster = movieDiv.querySelector('.movie-poster');
                             moviePoster.onclick = () => {
-                                const selectedSession = moviePoster.dataset.session;
+                                const selectedSession = moviePoster.dataset.session_time;
                                 if (selectedSession) {
                                     const selectedDate = new Date(currentDate); // Вибрана дата
                                     selectedDate.setDate(currentDate.getDate() + startDateIndex + i); // Встановлюємо вибрану дату
@@ -353,7 +353,7 @@
                                     // Перенаправлення на booking.html з параметрами
                                     const movieTitle = movie.title; // Назва фільму
                                     const movieImage = movie.image; // Зображення фільму
-                                    window.location.href = `booking.html?title=${encodeURIComponent(movieTitle)}&date=${encodeURIComponent(formattedDate)}&session=${encodeURIComponent(selectedSession)}&image=${encodeURIComponent(movieImage)}`;
+                                    window.location.href = `booking.html?title=${encodeURIComponent(movieTitle)}&session_date=${encodeURIComponent(formattedDate)}&session_time=${encodeURIComponent(selectedSession)}&image=${encodeURIComponent(movieImage)}`;
 
 
                                 }
@@ -369,9 +369,9 @@
                 const dateItemsDiv = document.getElementById('date-items');
                 for (let i = 0; i < 3; i++) {
                     const dateItem = document.getElementById(`day-${i}`);
-                    const date = new Date(currentDate);
-                    date.setDate(currentDate.getDate() + startDateIndex + i);
-                    dateItem.innerHTML = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+                    const session_date = new Date(currentDate);
+                    session_date.setDate(currentDate.getDate() + startDateIndex + i);
+                    dateItem.innerHTML = `${session_date.getDate()}.${session_date.getMonth() + 1}.${session_date.getFullYear()}`;
                     dateItem.onclick = () => {
                         selectedDateIndex = i; // Оновлюємо індекс вибраного дня
                         updateMovies(); // Оновлюємо фільми для вибраної дати

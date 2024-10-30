@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KinoBook - Оплата</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        body {
+            font-family: "Segoe UI", "Open Sans", "Helvetica Neue", sans-serif;
+            background-color: #f7f6f8;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .payment-container {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px auto;
+            width: 80%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #213786;
+            color: white;
+            border: none;
+            cursor: pointer;
+            height: 45px;
+            width: 150px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #263e97;
+            transform: scale(1.05);
+        }
+
+        button:active { 
+            background-color: #19244d;
+        }
+    </style>
+</head>
+<body>
+    <h1>Оплата квитка</h1>
+    <div class="payment-container">
+        <p><strong>Назва фільму:</strong> <span id="film-title"></span></p>
+        <p><strong>Дата:</strong> <span id="film-date"></span></p>
+        <p><strong>Час:</strong> <span id="film-session"></span></p>
+        <p><strong>Місця:</strong> <span id="selected-seats"></span></p>
+        <p><strong>Вартість:</strong> 140 грн</p>
+        <button id="pay-btn">Оплатити</button>
+    </div> 
+    <script>
+        const stripe = Stripe('pk_test_51QDmYDJorE4lZi4QVMtWUxEMXqyFb8qoNQf0Q1bf75BYNXxlEnuCsFffF26qfWhmL0KHyFNh2XJvYaZKuqyCsqWw00Ws1JcFJ4');   
+        const params = new URLSearchParams(window.location.search);
+        const title = params.get('title');
+        const session_date = params.get('session_date');
+        const session_time = params.get('session_time');
+        const seats = params.get('seats');
+        const full_name = params.get('full_name');
+        const phone = params.get('phone');
+        const email = params.get('email');
+
+        document.getElementById('film-title').innerText = title;
+        document.getElementById('film-date').innerText = session_date;
+        document.getElementById('film-session').innerText = session_time;
+        document.getElementById('selected-seats').innerText = seats;
+
+        document.getElementById('pay-btn').addEventListener('click', async () => { 
+            const response = await fetch('/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title,
+                    price: 14000, // У копійках
+                    session_date,
+                    session_time,
+                    seats,
+                    full_name,
+                    phone,
+                    email
+                })
+            });
+
+            const sessionData = await response.json();
+
+            if (response.ok) {
+                // Перенаправлення на Stripe Checkout
+                window.location.href = sessionData.url;
+            } else {
+                alert('Оплата не вдалася: ' + sessionData.error);
+            }
+        });
+    </script>
+</body>
+</html>

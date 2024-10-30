@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мої квитки - KinoBook</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background-color: #f7f6f8;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .title {
+            text-align: center;
+        }
+        .ticket-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        .ticket {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;  display: flex; /* Використовується для флекс-контейнера */
+            align-items: center; /* Центруємо елементи по вертикалі */
+            justify-content: center; 
+        }
+        .ticket:last-child {
+            border-bottom: none;
+        }
+        .ticket-details { 
+            margin-right: 20px;  
+            text-align: left;
+        } 
+        .ticket-info h2 {
+            left: 0px;
+        }
+        .qr-code {
+            margin-left: 20px;
+        }
+        .error-message {
+            color: red;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        .qr-code img {
+            display: block;
+            margin: 20px auto; 
+            border: 2px solid #213786;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: #fff;
+        } 
+    </style>
+</head>
+<body>
+    <h2 class="title">Ваші квитки</h2>
+    <div class="error-message" id="errorMessage"></div>
+    <div class="ticket-container" id="ticketContainer"></div>
+    
+    <script>
+        const userEmail = localStorage.getItem('email');
+
+        if (!userEmail) {
+            document.getElementById('errorMessage').textContent = 'Ви повинні бути увійшли, щоб переглядати свої квитки.';
+        } else {
+            fetch(`/api/tickets?email=${encodeURIComponent(userEmail)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Не вдалося отримати квитки. Спробуйте ще раз.');
+                    }
+                    return response.json();
+                })
+                .then(tickets => {
+                    const ticketContainer = document.getElementById('ticketContainer');
+
+                    if (tickets.length === 0) {
+                        ticketContainer.innerHTML = '<p>У вас немає куплених квитків.</p>';
+                        return;
+                    }
+
+                    tickets.forEach(ticket => {
+                        const ticketElement = document.createElement('div');
+                        ticketElement.className = 'ticket';
+                        ticketElement.innerHTML = `
+                            
+                            <div class="ticket-details">
+                                <h2>${ticket.title}</h2>    
+                                <p><strong>Дата:</strong> ${ticket.session_date} </p>
+                                <p><strong>Час:</strong> ${ticket.session_time} </p>
+                                <p><strong>Місця:</strong> ${ticket.seat_number} </p>
+                                <p><strong>Ціна:</strong> ${ticket.price} грн </p>
+                             </div>
+                             <div class="qr-code">
+                                <img src="${ticket.qr_code}" alt="QR Код">
+                            </div>
+                        `;
+                        ticketContainer.appendChild(ticketElement);
+                    });
+                })
+                .catch(error => {
+                    document.getElementById('errorMessage').textContent = error.message;
+                });
+        }
+    </script>
+</body>
+</html>
