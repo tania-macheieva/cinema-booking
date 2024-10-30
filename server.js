@@ -50,14 +50,18 @@
 
     // Маршрут для отримання даних фільмів
     app.get('/api/movies', (req, res) => {
-        const query = 'SELECT * FROM movies';
+        console.log('Fetching movies...');
+        const query = 'SELECT * FROM movies;';
         db.query(query, (err, results) => {
             if (err) {
+                console.error('Error retrieving movies:', err);
                 return res.status(500).send('Error retrieving movies: ' + err.message);
             }
-            res.json(results); // Відправляємо дані фільмів у форматі JSON
+            console.log('Movies retrieved:', results);
+            res.json(results);
         });
     });
+    
 
     app.get('/login', (req, res) => {
         res.sendFile(path.join(__dirname, 'public', 'login.html'));
@@ -278,7 +282,28 @@
         
     });
 
-
+    app.get('/api/occupied-seats', (req, res) => {
+        const { session_time, session_date } = req.query;
+        console.log('Session Time:', session_time, 'Session Date:', session_date); // Log the inputs
+    
+        const sql = `SELECT seat_number FROM tickets WHERE session_time = ? AND session_date = ?`;
+        
+        db.query(sql, [session_time, session_date], (err, results) => {
+            if (err) {
+                console.error('Помилка запиту:', err); // Log the error
+                return res.status(500).json({ error: 'Виникла помилка при отриманні зайнятих місць' });
+            }
+    
+            const occupiedSeats = [];
+            results.forEach(row => {
+                const seats = row.seat_number.split(',');
+                occupiedSeats.push(...seats.map(seat => parseInt(seat.trim(), 10)));
+            });
+    
+            res.json(occupiedSeats); // Return the occupied seats as JSON
+        });
+    });
+    
     // Обробка помилок
     app.use((err, req, res, next) => {
         console.error(err.stack);

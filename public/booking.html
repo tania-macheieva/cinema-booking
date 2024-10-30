@@ -92,10 +92,10 @@
         }
 
         .seat.occupied {
-            background-color: #213786;
-            cursor: not-allowed;
+            background-color: #7d7d7d; /* Темніший сірий для зайнятих місць */
+            cursor: not-allowed; /* Змінюємо курсор, щоб показати, що місце недоступне */
         }
-
+        
         /* Form */
         .form-container {
             margin: 20px auto;
@@ -178,18 +178,28 @@
             seat.addEventListener('click', () => {
                 // Toggle seat selection state
                 if (!seat.classList.contains('occupied')) {
-                    seat.classList.toggle('selected');
-                    // Update selected seats array
                     if (seat.classList.contains('selected')) {
-                        selectedSeats.push(seat);
-                    } else {
+                        // Якщо місце вже вибрано, скасувати вибір
+                        seat.classList.remove('selected');
                         selectedSeats = selectedSeats.filter(s => s !== seat);
+                    } else {
+                        // Перевірка на вибір лише одного місця
+                        if (selectedSeats.length > 0) {
+                            alert('Ви можете вибрати лише одне місце!');
+                            return;
+                        }
+                        // Вибрати нове місце
+                        seat.classList.add('selected');
+                        selectedSeats.push(seat);
                     }
-                    updateSelectedSeatsCount(); // Update count
+                    updateSelectedSeatsCount(); // Оновлення кількості вибраних місць
+                } else {
+                    alert('Це місце вже зайняте!');
                 }
             });
+            
             seatingChart.appendChild(seat);
-        }
+        } 
 
         // Get parameters from URL
         const params = new URLSearchParams(window.location.search);
@@ -220,8 +230,12 @@
         }
 
         async function fetchOccupiedSeats() {
+            const params = new URLSearchParams(window.location.search);
+            const sessionTime = params.get('session_time');
+            const sessionDate = params.get('session_date');
+        
             try {
-                const response = await fetch(`/api/occupied-seats?session_time=${encodeURIComponent(session_time)}&session_date=${encodeURIComponent(session_date)}`);
+                const response = await fetch(`/api/occupied-seats?session_time=${encodeURIComponent(selectedSession)}&session_date=${encodeURIComponent(formattedDate)}`);
                 const occupiedSeats = await response.json();
                 
                 // Позначаємо зайняті місця класом `.occupied`
@@ -235,7 +249,7 @@
             } catch (error) {
                 console.error('Помилка при отриманні зайнятих місць:', error);
             }
-        }
+        }  
 
         // Функція для перемикання вибору місць
         function toggleSeatSelection() {
@@ -258,7 +272,7 @@
             seatingChart.appendChild(seat);
         }
 
-        // Виклик функції для позначення зайнятих місць
+        // Виклик функції для отримання зайнятих місць
         fetchOccupiedSeats();
 
     </script>
