@@ -6,11 +6,15 @@
     <title>KinoBook - Квиток</title>
     <style>
         body {
-            font-family: "Segoe UI", "Open Sans", "Helvetica Neue", sans-serif;
+            font-family: "Segoe UI", sans-serif;
             background-color: #f7f6f8;
             color: #333;
-            text-align: center;
-            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden; 
+            margin: 0; /* Remove default margin */
+            padding: 70px 20px 20px; /* Add top padding to prevent overlap with fixed nav */
         }
 
         .ticket {

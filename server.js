@@ -17,7 +17,7 @@
     app.use(session({
         secret: process.env.SESSION_SECRET,  
         resave: false,
-        saveUninitialized: true,
+        saveUninitialized: true, 
     }));
 
     // Підключення до бази даних
@@ -271,7 +271,7 @@
     // Маршрут для отримання квитків користувача за електронною поштою
     app.get('/api/tickets', (req, res) => {
         const email = req.query.email;
-
+    
         const query = 'SELECT * FROM tickets WHERE customer_email = ?';
         db.query(query, [email], (err, results) => {
             if (err) {
@@ -279,18 +279,17 @@
             }
             res.json(results);
         });
-        
     });
+    
 
     app.get('/api/occupied-seats', (req, res) => {
         const { session_time, session_date } = req.query;
-        console.log('Session Time:', session_time, 'Session Date:', session_date); // Log the inputs
     
         const sql = `SELECT seat_number FROM tickets WHERE session_time = ? AND session_date = ?`;
         
         db.query(sql, [session_time, session_date], (err, results) => {
             if (err) {
-                console.error('Помилка запиту:', err); // Log the error
+                console.error('Помилка запиту:', err);
                 return res.status(500).json({ error: 'Виникла помилка при отриманні зайнятих місць' });
             }
     
@@ -299,10 +298,11 @@
                 const seats = row.seat_number.split(',');
                 occupiedSeats.push(...seats.map(seat => parseInt(seat.trim(), 10)));
             });
-    
-            res.json(occupiedSeats); // Return the occupied seats as JSON
+            
+            res.json(occupiedSeats);
         });
     });
+    
     
     // Обробка помилок
     app.use((err, req, res, next) => {
