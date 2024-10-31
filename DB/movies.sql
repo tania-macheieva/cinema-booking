@@ -1,0 +1,1 @@
+SELECT * FROM cinema_booking_db.movies;
