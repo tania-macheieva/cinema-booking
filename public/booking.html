@@ -176,12 +176,12 @@
         const seatingChart = document.getElementById('seating-chart');
         let selectedSeats = [];
 
-        // Create an interactive layout of the hall (15x10 seats)
+        
         for (let i = 0; i < 150; i++) {
             const seat = document.createElement('div');
             seat.classList.add('seat');
             seat.addEventListener('click', () => {
-                // Toggle seat selection state
+                
                 if (!seat.classList.contains('occupied')) {
                     if (seat.classList.contains('selected')) {
                         // Якщо місце вже вибрано, скасувати вибір
@@ -206,7 +206,7 @@
             seatingChart.appendChild(seat);
         } 
 
-        // Get parameters from URL
+        
         const params = new URLSearchParams(window.location.search);
         const title = params.get('title');
         const image = params.get('image');

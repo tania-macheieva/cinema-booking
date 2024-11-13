@@ -7,84 +7,83 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Roboto', sans-serif; /* Змінено шрифт */
-            background: linear-gradient(to right, #f7f6f8, #e0e0e0); /* Градієнтний фон */
+            font-family: 'Roboto', sans-serif; 
+            background: linear-gradient(to right, #f7f6f8, #e0e0e0);
             color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            padding: 20px; /* Додано відступ для мобільних пристроїв */
+            padding: 20px; 
             box-sizing: border-box;
         }
 
         .form-container {
             background-color: #fff;
-            padding: 40px; /* Збільшено відступи */
-            border-radius: 15px; /* Збільшено округлість */
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Посилено тінь */
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             max-width: 400px;
             width: 100%;
         }
 
         h2 {
             text-align: center;
-            margin-bottom: 20px; /* Додано відступ знизу заголовка */
-            font-weight: 700; /* Збільшена вага шрифту */
-            color: #213786; /* Зміна кольору заголовка */
+            margin-bottom: 20px;
+            font-weight: 700; 
+            color: #213786;
         }
 
         input {
-            width: calc(100% - 30px); /* Зменшено ширину для відступів */
-            padding: 15px; /* Збільшено відступи */
-            margin: 10px auto; /* Вирівнювання полів по центру з рівними відступами */
+            width: calc(100% - 30px); 
+            padding: 15px; 
+            margin: 10px auto;
             border: 1px solid #ccc;
-            border-radius: 8px; /* Збільшено округлість */
-            transition: border-color 0.3s; /* Анімація при фокусі */
-            font-size: 1em; /* Збільшено розмір шрифту */
-            display: block; /* Зроблено блочним елементом для центрування */
+            border-radius: 8px; 
+            transition: border-color 0.3s;
+            font-size: 1em; 
+            display: block; 
         }
 
         input:focus {
-            border-color: #213786; /* Зміна кольору рамки при фокусі */
-            outline: none; /* Схований обведення */
-            box-shadow: 0 0 5px rgba(33, 55, 134, 0.5); /* Тінь при фокусі */
+            border-color: #213786; 
+            outline: none; 
+            box-shadow: 0 0 5px rgba(33, 55, 134, 0.5);
         }
 
         button {
             width: 100%;
-            padding: 15px; /* Збільшено відступи */
+            padding: 15px; 
             background-color: #213786;
             color: white;
             border: none;
-            border-radius: 8px; /* Збільшено округлість */
-            cursor: pointer;
+            border-radius: 8px;
             font-size: 1em; 
             font-weight: bold;
             transition: background-color 0.3s, transform 0.3s;
-            margin-top: 10px; /* Додано відступ зверху кнопки */
+            margin-top: 10px;
         }
 
         button:hover {
             background-color: #263e97;
-            transform: scale(1.05); /* Збільшення кнопки при наведенні */
+            transform: scale(1.05); 
         }
 
         p {
             text-align: center;
-            margin-top: 20px; /* Додано відступ згорі */
-            font-size: 0.9em; /* Зменшено розмір шрифту для нижнього тексту */
+            margin-top: 20px;
+            font-size: 0.9em; 
         }
 
         a {
-            color: #213786; /* Зміна кольору посилань */
-            text-decoration: none; /* Схована підкреслення */
-            font-weight: 700; /* Зміна ваги шрифту для посилань */
+            color: #213786;
+            text-decoration: none; 
+            font-weight: 700; 
         }
 
         a:hover {
-            text-decoration: underline; /* Підкреслення при наведенні */
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -102,7 +101,7 @@
     </div>
     <script>
         document.getElementById('registerForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Зупинити стандартну поведінку
+            event.preventDefault(); 
 
             const formData = new FormData(this);
             const data = {
@@ -122,7 +121,6 @@
             })
             .then(response => {
                 if (response.ok) {
-                    // Перенаправлення на booking.html з параметрами
                     window.location.href = `index.html?full_name=${encodeURIComponent(data.full_name)}&phone=${encodeURIComponent(data.phone)}&email=${encodeURIComponent(data.email)}`;
                 } else {
                     alert('Сталася помилка під час реєстрації. Спробуйте ще раз.');

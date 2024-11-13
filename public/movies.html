@@ -16,8 +16,8 @@
 
         /* Navigation */
         nav {
-            background-color: #213786; /* Ensure this is consistent */
-            padding: 15px; /* Ensure padding is the same */
+            background-color: #213786; 
+            padding: 15px; 
             width: 100%;
             font-weight: bold;
         }
@@ -27,35 +27,33 @@
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: flex-start; /* Align items to the start */
+            justify-content: flex-start;
         }
 
         .logo {
-            color: white; /* Logo color should be white */
-            user-select: none; /* Prevent text selection */
+            color: white; 
+            user-select: none; 
             margin: 0 10px;
             padding-right: 7px;
             font-size: 18px;
         }
 
         nav ul li a {
-            color: white; /* Link color should be white */
-            text-decoration: none; /* Remove underline */
-            padding: 10px 15px; /* Consistent padding */
-            border-radius: 5px; /* Rounded corners */
+            color: white; 
+            text-decoration: none; 
+            padding: 10px 15px; 
+            border-radius: 5px; 
             transition: background-color 0.3s ease, color 0.3s ease; 
             font-size: 18px;
 
         }
 
         nav ul li a:hover {
-            background-color: #ef9010; /* Hover background color */
-            color: #333; /* Hover text color */
+            background-color: #ef9010; 
+            color: #333; 
         }
 
-
-
-        /* Style for the date selection */
+        /* The date selection */
         .date-selector {
             display: flex;
             justify-content: center;
@@ -79,7 +77,7 @@
             text-align: center;
             font-size: 15px;
             border: 1px solid transparent;
-            margin: 0 5px; /* Відстань між днями */
+            margin: 0 5px; 
             font-weight: bold;
         }
 
@@ -111,7 +109,6 @@
             color: #333;
         }
 
-        /* Style for navigation arrows */
         .arrow {
             font-size: 24px;
             cursor: pointer;
@@ -271,7 +268,7 @@
                         description: movie.long_description,
                         image: movie.poster_url,
                         rating: movie.rating,
-                        sessions: ["14:00", "16:00", "18:00"], // Використовуйте динамічні дані тут
+                        sessions: ["14:00", "16:00", "18:00"],
                         price: `140 грн`
                     });
                 });
@@ -282,18 +279,16 @@
             }
         };
 
-        // Оновлена функція для відображення фільмів
         const updateMovies = () => {
             const movieListDiv = document.getElementById('movie-list');
-            movieListDiv.innerHTML = ''; // Очищаємо список фільмів
-
-            const selectedDay = currentDate.getDate() + startDateIndex + selectedDateIndex; // Обираємо дату на основі вибраного дня
+            movieListDiv.innerHTML = ''; 
+            const selectedDay = currentDate.getDate() + startDateIndex + selectedDateIndex; 
             const month = currentDate.getMonth();
             const year = currentDate.getFullYear();
 
-            const selectedDate = new Date(year, month, selectedDay); // Формуємо правильну дату
-            const dateKey = `${selectedDate.getDate()}-${selectedDate.getMonth() + 1}-${selectedDate.getFullYear()}`; // Формуємо ключ з дня, місяця і року
-            const movies = moviesData[dateKey]; // Отримуємо фільми для вибраної дати
+            const selectedDate = new Date(year, month, selectedDay);
+            const dateKey = `${selectedDate.getDate()}-${selectedDate.getMonth() + 1}-${selectedDate.getFullYear()}`;
+            const movies = moviesData[dateKey]; 
 
             if (movies && movies.length > 0) {
                 movies.forEach(movie => {
@@ -318,13 +313,12 @@
                         </div>
                     `;
 
-                    // Додаємо сеанси
                     const movieSessionsDiv = movieDiv.querySelector('.movie-sessions');
                     movie.sessions.forEach(session_time => {
                         const sessionElement = document.createElement('div');
                         const now = new Date();
                         const sessionDate = new Date(currentDate);
-                        sessionDate.setDate(currentDate.getDate() + startDateIndex + selectedDateIndex); // Дата на основі вибраної дати
+                        sessionDate.setDate(currentDate.getDate() + startDateIndex + selectedDateIndex); 
                         const [hour, minute] = session_time.split(':');
                         sessionDate.setHours(hour, minute);
                         const isPast = sessionDate < now;
@@ -333,7 +327,6 @@
                         sessionElement.dataset.session_time = session_time;
                         sessionElement.innerHTML = session_time;
 
-                        // Додаємо обробник кліку для сеансу
                         sessionElement.onclick = () => {
                             if (!isPast) {
                                 const selectedSession = document.querySelector('.session_time.selected');
@@ -342,27 +335,24 @@
                                 }
                                 sessionElement.classList.add('selected');
 
-                                // Запам'ятовуємо вибраний сеанс
                                 const moviePoster = movieDiv.querySelector('.movie-poster');
-                                moviePoster.dataset.session_time = session_time; // Зберігаємо вибраний сеанс
+                                moviePoster.dataset.session_time = session_time; 
                             }
                         };
 
                         movieSessionsDiv.appendChild(sessionElement);
                     });
 
-                    // Додаємо обробник кліку для постера фільму
                     const moviePoster = movieDiv.querySelector('.movie-poster');
                     moviePoster.onclick = () => {
                         const selectedSession = moviePoster.dataset.session_time;
                         if (selectedSession) {
-                            const selectedDate = new Date(currentDate); // Вибрана дата
-                            selectedDate.setDate(currentDate.getDate() + startDateIndex + selectedDateIndex); // Встановлюємо вибрану дату
+                            const selectedDate = new Date(currentDate); 
+                            selectedDate.setDate(currentDate.getDate() + startDateIndex + selectedDateIndex); 
                             const formattedDate = `${selectedDate.getDate()}.${selectedDate.getMonth() + 1}.${selectedDate.getFullYear()}`;
 
-                            // Перенаправлення на booking.html з параметрами
-                            const movieTitle = movie.title; // Назва фільму
-                            const movieImage = movie.image; // Зображення фільму
+                            const movieTitle = movie.title; 
+                            const movieImage = movie.image; 
                             window.location.href = `booking.html?title=${encodeURIComponent(movieTitle)}&session_date=${encodeURIComponent(formattedDate)}&session_time=${encodeURIComponent(selectedSession)}&image=${encodeURIComponent(movieImage)}`;
                         }
                     };
@@ -387,18 +377,18 @@
                 dateItem.innerHTML = `${session_date.getDate()}.${session_date.getMonth() + 1}.${session_date.getFullYear()}`;
                 
                 dateItem.onclick = () => {
-                    selectedDateIndex = i; // Оновлюємо індекс вибраного дня
+                    selectedDateIndex = i; 
                     console.log(`Вибрана дата: ${session_date.getDate()}.${session_date.getMonth() + 1}.${session_date.getFullYear()}`);
-                    updateMovies(); // Оновлюємо фільми для вибраної дати
+                    updateMovies(); 
                     const activeItem = document.querySelector('.date-item.active');
                     if (activeItem) {
                         activeItem.classList.remove('active');
                     }
-                    dateItem.classList.add('active'); // Додаємо активний клас для вибраного дня
+                    dateItem.classList.add('active'); 
                 };
                 
                 if (i === selectedDateIndex) {
-                    dateItem.classList.add('active'); // Вибір середнього дня за замовчуванням
+                    dateItem.classList.add('active'); 
                 }
             }
         };
@@ -417,7 +407,6 @@
         document.getElementById('next-date').onclick = nextDate;
         document.getElementById('prev-date').onclick = prevDate;
 
-        // Завантажуємо фільми при завантаженні сторінки
         fetchMovies();
         updateDateItems();
  

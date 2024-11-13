@@ -84,8 +84,6 @@
 
     app.post('/login', (req, res) => {
         const { email, password } = req.body;
-
-        // Отримання всіх необхідних даних з бази для вказаного email
         const query = 'SELECT * FROM customers WHERE email = ?';
         db.query(query, [email], (err, results) => {
             if (err) {
